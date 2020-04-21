@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
@@ -18,6 +19,7 @@ public class FormTodoActivity extends AppCompatActivity {
     Button botaoSalvar;
     EditText campoDescricao;
     private TodoService todoService;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +42,8 @@ public class FormTodoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                progressBar = findViewById(R.id.activity_form_progress_bar);
+                progressBar.setVisibility(View.VISIBLE);
                 final String descricao = campoDescricao.getText().toString();
                 AsyncTask.execute(new Runnable() {
                     @Override

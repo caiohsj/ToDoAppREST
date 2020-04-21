@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private List<Todo> todos;
     private TodoService todoService;
     private FloatingActionButton botaoAdd;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,21 +34,33 @@ public class MainActivity extends AppCompatActivity {
         inicializarListView();
         inicializarBotoes();
         inicializarAcoes();
+    }
 
-        /*
-        AsyncTask.execute(new Runnable() {
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        progressBar = findViewById(R.id.activity_main_progress_bar);
+        progressBar.setVisibility(View.VISIBLE);
+
+        AsyncTask.execute(new Runnable(){
             @Override
             public void run() {
-                Todo todo = new Todo();
-                todo.setDescricao("Ir na padaria");
-                todo.setPrioridade("BAIXA");
                 try {
-                    todoService.adicionar(todo);
+                    todos.clear();
+                    todos.addAll(todoService.listar());
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            adapter.notifyDataSetChanged();
+                            progressBar.setVisibility(View.INVISIBLE);
+                        }
+                    });
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-        }); */
+        });
     }
 
     public void inicializarListView(){
@@ -70,26 +84,4 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        AsyncTask.execute(new Runnable(){
-            @Override
-            public void run() {
-                try {
-                    todos.clear();
-                    todos.addAll(todoService.listar());
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            adapter.notifyDataSetChanged();
-                        }
-                    });
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        //t.start();
-    }
 }
